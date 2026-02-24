@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Переводчик</title>
+</head>
+<body>
+    <h2>Переводчик текста</h2>
+
+    <form method="POST">
+        <textarea name="text" rows="5" cols="50" placeholder="Введите текст...">{{ original_text }}</textarea>
+        <br><br>
+
+        <label>С языка:</label>
+        <select name="src_lang">
+            <option value="auto">Авто</option>
+            <option value="ru">Русский</option>
+            <option value="en">Английский</option>
+            <option value="de">Немецкий</option>
+            <option value="fr">Французский</option>
+        </select>
+
+        <label>На язык:</label>
+        <select name="dest_lang">
+            <option value="en">Английский</option>
+            <option value="ru">Русский</option>
+            <option value="de">Немецкий</option>
+            <option value="fr">Французский</option>
+        </select>
+
+        <br><br>
+        <button type="submit">Перевести</button>
+    </form>
+
+    {% if translated_text %}
+        <h3>Перевод:</h3>
+        <p>{{ translated_text }}</p>
+    {% endif %}
+
+</body>
+</html>
