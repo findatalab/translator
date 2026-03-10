@@ -1,41 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+
 <head>
     <meta charset="UTF-8">
-    <title>Переводчик</title>
+    <title>Анализ эмоционального сходства</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #5f6de0, #7c4db3);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .container {
+            width: 900px;
+            margin: auto;
+            background: rgba(255,255,255,0.08);
+            padding: 30px;
+            border-radius: 14px;
+        }
+
+        textarea {
+            width: 95%;
+            height: 120px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            resize: none;
+            font-size: 14px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #ffd94a;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            margin-top: 20px;
+            width: 100%;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        .progress {
+            height: 22px;
+            border-radius: 10px;
+            background: #00ffa2;
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .block {
+            width: 45%;
+            background: rgba(0,0,0,0.25);
+            padding: 18px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .analysis {
+            margin-top: 30px;
+            background: rgba(0,0,0,0.25);
+            padding: 18px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        p {
+            margin: 6px 0;
+        }
+    </style>
 </head>
+
 <body>
-    <h2>Переводчик текста</h2>
+
+<div class="container">
+
+    <h2>Анализ эмоционального сходства перевода</h2>
 
     <form method="POST">
-        <textarea name="text" rows="5" cols="50" placeholder="Введите текст...">{{ original_text }}</textarea>
-        <br><br>
 
-        <label>С языка:</label>
-        <select name="src_lang">
-            <option value="auto">Авто</option>
-            <option value="ru">Русский</option>
-            <option value="en">Английский</option>
-            <option value="de">Немецкий</option>
-            <option value="fr">Французский</option>
-        </select>
+        <textarea name="original_text" placeholder="Оригинальный текст">{{ original_text }}</textarea>
 
-        <label>На язык:</label>
-        <select name="dest_lang">
-            <option value="en">Английский</option>
-            <option value="ru">Русский</option>
-            <option value="de">Немецкий</option>
-            <option value="fr">Французский</option>
-        </select>
+        <textarea name="translated_text" placeholder="Перевод">{{ translated_text }}</textarea>
 
-        <br><br>
-        <button type="submit">Перевести</button>
+        <button type="submit">Анализировать</button>
+
     </form>
 
-    {% if translated_text %}
-        <h3>Перевод:</h3>
-        <p>{{ translated_text }}</p>
+    {% if result %}
+
+        <h3>Эмоциональное сходство: {{ result.comparison.similarity }}%</h3>
+
+        <div class="progress-bar">
+            <div class="progress" style="width: {{ result.comparison.similarity|int }}%;"></div>
+        </div>
+
+        <div class="metrics">
+
+            <div class="block">
+                <h3>Оригинал</h3>
+                <p>Доминирующая эмоция: {{ result.original.dominant }}</p>
+                <p>Положительные слова: {{ result.original.positive }}</p>
+                <p>Отрицательные слова: {{ result.original.negative }}</p>
+                <p>Эмоциональная плотность: {{ result.original.density }}</p>
+                <p>Полярность: {{ result.original.polarity }}</p>
+                <p>Баланс эмоций: {{ result.original.balance }}</p>
+                <p>Слова-усилители: {{ result.original.intensity }}</p>
+                <p>Количество слов: {{ result.original.word_count }}</p>
+            </div>
+
+            <div class="block">
+                <h3>Перевод</h3>
+                <p>Доминирующая эмоция: {{ result.translation.dominant }}</p>
+                <p>Положительные слова: {{ result.translation.positive }}</p>
+                <p>Отрицательные слова: {{ result.translation.negative }}</p>
+                <p>Эмоциональная плотность: {{ result.translation.density }}</p>
+                <p>Полярность: {{ result.translation.polarity }}</p>
+                <p>Баланс эмоций: {{ result.translation.balance }}</p>
+                <p>Слова-усилители: {{ result.translation.intensity }}</p>
+                <p>Количество слов: {{ result.translation.word_count }}</p>
+            </div>
+
+        </div>
+
+        <div class="analysis">
+            <h3>Сравнение эмоций</h3>
+            <p>Совпадение основной эмоции: {{ result.comparison.emotion_match }}</p>
+            <p>Разница полярности: {{ result.comparison.polarity_difference }}</p>
+            <p>Разница эмоциональной плотности: {{ result.comparison.density_difference }}</p>
+            <p>Сохранение эмоционального тона: {{ result.comparison.emotion_preservation }}%</p>
+        </div>
+
     {% endif %}
+
+</div>
 
 </body>
 </html>

@@ -1,33 +1,34 @@
 from flask import Flask, render_template, request
-from trans import translator
+from emotion import analyze_text, compare_emotions
 
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    translated_text = ""
     original_text = ""
-    src_lang = "auto"
-    dest_lang = "en"
+    translated_text = ""
+    result = None
 
     if request.method == "POST":
-        original_text = request.form.get("text")
-        src_lang = request.form.get("src_lang")
-        dest_lang = request.form.get("dest_lang")
+        original_text = request.form.get("original_text", "")
+        translated_text = request.form.get("translated_text", "")
 
-        if original_text:
-            try:
-                translation = translator()
-                translated_text = translation
-            except Exception as e:
-                translated_text = f"Ошибка перевода: {str(e)}"
+        if original_text and translated_text:
+            original_metrics = analyze_text(original_text)
+            translation_metrics = analyze_text(translated_text)
+            comparison = compare_emotions(original_metrics, translation_metrics)
+
+            result = {
+                "original": original_metrics,
+                "translation": translation_metrics,
+                "comparison": comparison
+            }
 
     return render_template(
         "index.html",
-        translated_text=translated_text,
         original_text=original_text,
-        src_lang=src_lang,
-        dest_lang=dest_lang
+        translated_text=translated_text,
+        result=result
     )
 
 if __name__ == "__main__":
