@@ -3,87 +3,355 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Анализ эмоционального сходства</title>
+    <title>Эмоциональный анализ перевода художественного текста</title>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #5f6de0, #7c4db3);
-            color: white;
-            padding: 40px;
-            text-align: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
         }
 
         .container {
-            width: 900px;
-            margin: auto;
-            background: rgba(255,255,255,0.08);
-            padding: 30px;
-            border-radius: 14px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        textarea {
-            width: 95%;
-            height: 120px;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            resize: none;
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
             font-size: 14px;
         }
 
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-box label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-wrapper {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
         button {
-            margin-top: 20px;
-            padding: 12px 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
-            border-radius: 8px;
+            padding: 14px 48px;
             font-size: 16px;
-            background: #ffd94a;
+            font-weight: 600;
+            border-radius: 40px;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .similarity-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #f3f4f6 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .similarity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .similarity-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .similarity-value {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .progress-bar {
-            margin-top: 20px;
-            width: 100%;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            height: 12px;
+            overflow: hidden;
         }
 
-        .progress {
-            height: 22px;
-            border-radius: 10px;
-            background: #00ffa2;
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.6s ease;
         }
 
-        .metrics {
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 24px;
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .metric-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .metric-row {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e8e8e8;
         }
 
-        .block {
-            width: 45%;
-            background: rgba(0,0,0,0.25);
-            padding: 18px;
-            border-radius: 10px;
-            text-align: left;
+        .metric-label {
+            color: #666;
+            font-size: 13px;
         }
 
-        .analysis {
-            margin-top: 30px;
-            background: rgba(0,0,0,0.25);
-            padding: 18px;
-            border-radius: 10px;
-            text-align: left;
+        .metric-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
         }
 
-        h3 {
-            margin-top: 0;
+        .dominant-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        p {
-            margin: 6px 0;
+        .dominant-positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .dominant-negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .dominant-neutral {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .cultural-section {
+            background: #fff8e1;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .cultural-title {
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .markers-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .marker-tag {
+            background: #fff3cd;
+            color: #856404;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: monospace;
+        }
+
+        .risk-section {
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .risk-high {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .risk-medium {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .risk-low {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .risk-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .risk-recommendation {
+            font-size: 14px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .comparison-section {
+            background: linear-gradient(135deg, #e8eaf6 0%, #ede7f6 100%);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .comparison-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .comparison-item {
+            background: white;
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .comparison-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .comparison-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+            .input-group {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .similarity-header {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -91,65 +359,185 @@
 <body>
 
 <div class="container">
+    <div class="card">
+        <h1>Эмоциональный анализ перевода</h1>
+        <div class="subtitle">Оценка сохранения эмоционального фона и выявление культурных маркеров</div>
 
-    <h2>Анализ эмоционального сходства перевода</h2>
+        <form method="POST">
+            <div class="input-group">
+                <div class="input-box">
+                    <label>Оригинальный текст</label>
+                    <textarea name="original_text" placeholder="Введите текст на исходном языке...">{{ original_text }}</textarea>
+                </div>
+                <div class="input-box">
+                    <label>Переведённый текст</label>
+                    <textarea name="translated_text" placeholder="Введите текст перевода...">{{ translated_text }}</textarea>
+                </div>
+            </div>
 
-    <form method="POST">
+            <div class="button-wrapper">
+                <button type="submit">Выполнить анализ</button>
+            </div>
+        </form>
 
-        <textarea name="original_text" placeholder="Оригинальный текст">{{ original_text }}</textarea>
+        {% if result %}
 
-        <textarea name="translated_text" placeholder="Перевод">{{ translated_text }}</textarea>
-
-        <button type="submit">Анализировать</button>
-
-    </form>
-
-    {% if result %}
-
-        <h3>Эмоциональное сходство: {{ result.comparison.similarity }}%</h3>
-
-        <div class="progress-bar">
-            <div class="progress" style="width: {{ result.comparison.similarity|int }}%;"></div>
+        <div class="similarity-section">
+            <div class="similarity-header">
+                <span class="similarity-label">Эмоциональное сходство оригинала и перевода</span>
+                <span class="similarity-value">{{ result.comparison.similarity }}%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ result.comparison.similarity|int }}%;"></div>
+            </div>
         </div>
 
-        <div class="metrics">
-
-            <div class="block">
+        <div class="metrics-grid">
+            <div class="metric-card">
                 <h3>Оригинал</h3>
-                <p>Доминирующая эмоция: {{ result.original.dominant }}</p>
-                <p>Положительные слова: {{ result.original.positive }}</p>
-                <p>Отрицательные слова: {{ result.original.negative }}</p>
-                <p>Эмоциональная плотность: {{ result.original.density }}</p>
-                <p>Полярность: {{ result.original.polarity }}</p>
-                <p>Баланс эмоций: {{ result.original.balance }}</p>
-                <p>Слова-усилители: {{ result.original.intensity }}</p>
-                <p>Количество слов: {{ result.original.word_count }}</p>
+                <div class="metric-row">
+                    <span class="metric-label">Доминирующая эмоция</span>
+                    <span class="metric-value">
+                        <span class="dominant-badge 
+                            {% if result.original.dominant == 'positive' %}dominant-positive
+                            {% elif result.original.dominant == 'negative' %}dominant-negative
+                            {% else %}dominant-neutral{% endif %}">
+                            {% if result.original.dominant == 'positive' %}Положительная
+                            {% elif result.original.dominant == 'negative' %}Отрицательная
+                            {% else %}Нейтральная{% endif %}
+                        </span>
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Положительные слова</span>
+                    <span class="metric-value">{{ result.original.positive }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Отрицательные слова</span>
+                    <span class="metric-value">{{ result.original.negative }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Эмоциональная плотность</span>
+                    <span class="metric-value">{{ result.original.density }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Полярность</span>
+                    <span class="metric-value">{{ result.original.polarity }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Баланс эмоций</span>
+                    <span class="metric-value">{{ result.original.balance }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Слова-усилители</span>
+                    <span class="metric-value">{{ result.original.intensity }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Всего слов</span>
+                    <span class="metric-value">{{ result.original.word_count }}</span>
+                </div>
             </div>
 
-            <div class="block">
+            <div class="metric-card">
                 <h3>Перевод</h3>
-                <p>Доминирующая эмоция: {{ result.translation.dominant }}</p>
-                <p>Положительные слова: {{ result.translation.positive }}</p>
-                <p>Отрицательные слова: {{ result.translation.negative }}</p>
-                <p>Эмоциональная плотность: {{ result.translation.density }}</p>
-                <p>Полярность: {{ result.translation.polarity }}</p>
-                <p>Баланс эмоций: {{ result.translation.balance }}</p>
-                <p>Слова-усилители: {{ result.translation.intensity }}</p>
-                <p>Количество слов: {{ result.translation.word_count }}</p>
+                <div class="metric-row">
+                    <span class="metric-label">Доминирующая эмоция</span>
+                    <span class="metric-value">
+                        <span class="dominant-badge 
+                            {% if result.translation.dominant == 'positive' %}dominant-positive
+                            {% elif result.translation.dominant == 'negative' %}dominant-negative
+                            {% else %}dominant-neutral{% endif %}">
+                            {% if result.translation.dominant == 'positive' %}Положительная
+                            {% elif result.translation.dominant == 'negative' %}Отрицательная
+                            {% else %}Нейтральная{% endif %}
+                        </span>
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Положительные слова</span>
+                    <span class="metric-value">{{ result.translation.positive }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Отрицательные слова</span>
+                    <span class="metric-value">{{ result.translation.negative }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Эмоциональная плотность</span>
+                    <span class="metric-value">{{ result.translation.density }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Полярность</span>
+                    <span class="metric-value">{{ result.translation.polarity }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Баланс эмоций</span>
+                    <span class="metric-value">{{ result.translation.balance }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Слова-усилители</span>
+                    <span class="metric-value">{{ result.translation.intensity }}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Всего слов</span>
+                    <span class="metric-value">{{ result.translation.word_count }}</span>
+                </div>
             </div>
-
         </div>
 
-        <div class="analysis">
-            <h3>Сравнение эмоций</h3>
-            <p>Совпадение основной эмоции: {{ result.comparison.emotion_match }}</p>
-            <p>Разница полярности: {{ result.comparison.polarity_difference }}</p>
-            <p>Разница эмоциональной плотности: {{ result.comparison.density_difference }}</p>
-            <p>Сохранение эмоционального тона: {{ result.comparison.emotion_preservation }}%</p>
+        {% if result.comparison.translation_risk.has_cultural_markers %}
+        <div class="cultural-section">
+            <div class="cultural-title">Культурные маркеры в оригинальном тексте</div>
+            <div class="markers-list">
+                {% for marker in result.comparison.cultural_markers_original[:20] %}
+                <span class="marker-tag">{{ marker }}</span>
+                {% endfor %}
+                {% if result.comparison.cultural_markers_count_original > 20 %}
+                <span class="marker-tag">+{{ result.comparison.cultural_markers_count_original - 20 }} ещё</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="risk-section 
+            {% if result.comparison.translation_risk.risk_level == 'high' %}risk-high
+            {% elif result.comparison.translation_risk.risk_level == 'medium' %}risk-medium
+            {% else %}risk-low{% endif %}">
+            <div class="risk-title">
+                {% if result.comparison.translation_risk.risk_level == 'high' %}Высокий риск искажения эмоционального фона
+                {% elif result.comparison.translation_risk.risk_level == 'medium' %}Средний риск искажения эмоционального фона
+                {% else %}Низкий риск искажения эмоционального фона{% endif %}
+            </div>
+            <div class="risk-recommendation">
+                {{ result.comparison.translation_risk.recommendation }}
+            </div>
         </div>
 
-    {% endif %}
+        <div class="comparison-section">
+            <div class="comparison-title">Детальное сравнение</div>
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-label">Совпадение эмоций</div>
+                    <div class="comparison-value">
+                        {% if result.comparison.emotion_match %}Да{% else %}Нет{% endif %}
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Разница полярности</div>
+                    <div class="comparison-value">{{ result.comparison.polarity_difference }}</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Разница плотности</div>
+                    <div class="comparison-value">{{ result.comparison.density_difference }}</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Сохранение тона</div>
+                    <div class="comparison-value">{{ result.comparison.emotion_preservation }}%</div>
+                </div>
+            </div>
+        </div>
 
+        {% endif %}
+    </div>
 </div>
 
 </body>
