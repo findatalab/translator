@@ -35,22 +35,27 @@
 python -m venv venv
 
 Активация (Mac/Linux):
+
 source venv/bin/activate
 
 Активация (Windows):
+
 venv\Scripts\activate
 
 ### 3. Установка зависимостей
 
 pip install --upgrade pip
+
 pip install -r requirements.txt
 
 ### 4. Установка Ollama (для LLM-рекомендаций)
 
 Mac:
+
 brew install ollama
 
 Linux:
+
 curl -fsSL https://ollama.com/install.sh | sh
 
 Windows: скачайте установщик с [ollama.com](https://ollama.com)
@@ -58,15 +63,19 @@ Windows: скачайте установщик с [ollama.com](https://ollama.co
 ### 5. Запуск Ollama и загрузка модели
 
 Запуск сервера Ollama (в отдельном терминале):
+
 ollama serve
 
 В другом терминале загрузите модель (4.7 ГБ):
+
 ollama pull qwen2.5:7b
 
 Если мало памяти, используйте лёгкую версию (0.5 ГБ):
+
 ollama pull qwen2.5:0.5b
 
 Дополнительно можно загрузить модель в помощь предыдущей для более точного выявления культурных маркеров (4.4 ГБ):
+
 ollama pull mistral:7b
 
 ### 6. Подготовка данных
