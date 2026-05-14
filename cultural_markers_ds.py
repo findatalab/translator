@@ -1,4 +1,6 @@
-# Выявление аллюзий (модель: Qwen2.5:7b)
+"""
+Выявление аллюзий (модель: Qwen2.5:7b)
+"""
 
 import csv
 import os
@@ -7,8 +9,10 @@ import subprocess
 import sys
 import time
 import threading
+import os
 
 MODEL = "qwen2.5:7b"
+BOOKS_DIR = "data/books"
 
 def check_ollama():
     try:
@@ -21,8 +25,8 @@ def check_ollama():
         return False
 
 my_books = {
-    "books/1984_original.txt": "1984 by George Orwell",
-    "books/hp_original.txt": "Harry Potter by J.K. Rowling"
+    os.path.join(BOOKS_DIR, "1984_original.txt"): "1984 by George Orwell",
+    os.path.join(BOOKS_DIR, "hp_original.txt"): "Harry Potter by J.K. Rowling"
 }
 
 def read_entire_book(file_path):
@@ -138,7 +142,7 @@ if __name__ == "__main__":
         
         sorted_unique = sorted(unique.items(), key=lambda x: x[0])
         
-        with open("cultural_markers_dataset.csv", "w", newline="", encoding="utf-8") as f:
+        with open("data/cultural_markers_dataset.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["cultural_marker", "definition"])
             for marker, definition in sorted_unique:

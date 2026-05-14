@@ -1,4 +1,6 @@
-# Выявление аллюзий (модель: mistral:7b)
+"""
+Выявление аллюзий (модель: mistral:7b)
+"""
 
 import csv
 import os
@@ -9,6 +11,7 @@ import time
 import threading
 
 MODEL = "mistral:7b"
+BOOKS_DIR = "data/books"
 
 def check_ollama():
     try:
@@ -21,8 +24,8 @@ def check_ollama():
         return False
 
 my_books = {
-    "books/1984_original.txt": "1984 by George Orwell",
-    "books/hp_original.txt": "Harry Potter by J.K. Rowling"
+    os.path.join(BOOKS_DIR, "1984_original.txt"): "1984 by George Orwell",
+    os.path.join(BOOKS_DIR, "hp_original.txt"): "Harry Potter by J.K. Rowling"
 }
 
 def read_entire_book(file_path):
@@ -137,7 +140,7 @@ if __name__ == "__main__":
             if marker not in unique:
                 unique[marker] = definition
         
-        with open("cultural_markers_dataset_2.csv", "w", newline="", encoding="utf-8") as f:
+        with open("data/cultural_markers_dataset_2.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["cultural_marker", "definition"])
             for marker, definition in sorted(unique.items()):

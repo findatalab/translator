@@ -1,4 +1,6 @@
-# Создание одного словаря культурных маркеров
+"""
+Создание одного словаря культурных маркеров
+"""
 
 import csv
 import re
@@ -111,7 +113,7 @@ def download_idioms():
 def merge_all_datasets():
     all_markers = []
     
-    your_files = ["cultural_markers_dataset.csv", "cultural_markers_dataset_2.csv"]
+    your_files = ["data/cultural_markers_dataset.csv", "data/cultural_markers_dataset_2.csv"]
     
     for file in your_files:
         try:
@@ -140,7 +142,7 @@ def merge_all_datasets():
     
     filtered.sort()
     
-    output_file = "cultural_markers_merged.csv"
+    output_file = "data/cultural_markers_merged.csv"
     
     with open(output_file, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
